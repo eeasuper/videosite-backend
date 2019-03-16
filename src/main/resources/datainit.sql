@@ -1,0 +1,10 @@
+--CREATE TABLE VIDEOS_UPLOADED
+--(
+--	FILENAME VARCHAR(255) not null,
+--	id BIGINT not null
+--);
+--
+--INSERT INTO VIDEOS_UPLOADED (
+--	"test_filename",
+--	4103
+--)

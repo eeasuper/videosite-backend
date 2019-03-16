@@ -1,0 +1,97 @@
+package com.nano.videosite.models;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+	private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) long id;
+	private @Column(nullable=false) String  name;
+	private @Column(nullable=false) String username;
+	private @Column(nullable=false) String password;
+	private @Column(nullable=false) String email;
+	private String token;
+	
+	public User(){
+	}
+	
+	//Will this constructor work?
+	public User(String username) {
+		this.username = username;
+	}
+
+	public User(String username, String password) {
+		super();
+		this.username = username;
+		this.password = password;
+	}
+	
+	public User(String name, String username, String password, String email) {
+		super();
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.email = email;
+	}
+	public User(String token, String name, String username, String password, String email) {
+		super();
+		this.token = token;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.email = email;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	
+}
