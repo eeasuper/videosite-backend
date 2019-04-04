@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,21 +21,47 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nano.videosite.models.Video;
+import com.nano.videosite.repositories.VideoRepository;
+
 @Service
 public class FileSystemStorageService implements StorageService{
     private final Path rootLocation;
+    private final String rootLoc = "upload-dir";
+    //https://stackoverflow.com/questions/42850555/video-and-audio-formats-supported-by-all-browsers
+    private final List<String> videoFormats = new ArrayList<>(Arrays.asList(".mp4",".webm",".ogg"));
     
-    private final List<String> videoFormats = new ArrayList<>(Arrays.asList(".mp4",".avi",".mov",".flv",".wmv",".mkv"));
+    @Autowired
+    VideoRepository videoRepository;
     
     @Autowired
     public FileSystemStorageService(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
     }
-
+    
+    private Path createDirectory(Long userId) {
+    	Path location = Paths.get(this.rootLoc + "/" +this.rootLoc + "-"+userId.toString());
+    	try {
+			Files.createDirectories(location);
+		} catch (IOException e) {
+			throw new StorageException("Could not create custom directory for userId: "+userId.toString(), e);
+		}
+    	return location;
+    }
+    
+    private String getRealFilename(String filename, Long date) {
+    	int dot = filename.lastIndexOf(".");
+        String fileSubstring = filename.substring(0, dot);
+        String realFilename = filename.replace(fileSubstring, fileSubstring.concat("-").concat(date + ""));
+        return realFilename;
+    }
+    
     @Override
-    public void store(MultipartFile file) {
+    public Video store(MultipartFile file, Long userId) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
-        System.out.println(filename);
+        Long date = new Date().getTime();
+        String realFilename = getRealFilename(filename, date);
+    	Path location = createDirectory(userId);
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
@@ -54,13 +81,16 @@ public class FileSystemStorageService implements StorageService{
             	throw new StorageException("Cannot store file of this file type: " + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, this.rootLocation.resolve(filename),
+            	System.out.println("test1");
+                Files.copy(inputStream, location.resolve(realFilename),
                     StandardCopyOption.REPLACE_EXISTING);
             }
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
         }
+        return videoRepository.save(new Video(realFilename, date));
+        
     }
 
     @Override
@@ -77,26 +107,27 @@ public class FileSystemStorageService implements StorageService{
     }
 
     @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
+    public Path load(String filename, Long userId) {
+    	return Paths.get(this.rootLoc + "/" +this.rootLoc + "-"+userId.toString()).resolve(filename);
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Resource loadAsResource(Long userId, Long videoId) {
         try {
-            Path file = load(filename);
+        	Video video = videoRepository.findById(videoId).orElseThrow();
+            Path file = load(video.getFilename(), userId);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
             else { 
                 throw new StorageFileNotFoundException(
-                        "Could not read file: " + filename);
+                        "Could not read file of videoId: " + videoId);
 
             }
         }
         catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+            throw new StorageFileNotFoundException("Could not read file of videoId: " + videoId, e);
         }
     }
 

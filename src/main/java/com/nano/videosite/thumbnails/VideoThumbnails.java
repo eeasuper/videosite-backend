@@ -54,6 +54,7 @@ public class VideoThumbnails {
         for (int i = 0 ; i < 50 ; i++) {
         	Path a = Paths.get("thumbnail-dir");
             ImageIO.write(g.grab().getBufferedImage(), "png", new File(a.toString() +"/"+"yui-ura-on-" + System.currentTimeMillis() + ".png"));
+            break;
         }
 
          g.stop();

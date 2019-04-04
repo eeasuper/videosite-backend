@@ -46,7 +46,7 @@ public class FileUploadController {
     }
     
 //    @GetMapping("/")
-    @RequestMapping(method= RequestMethod.GET, value = "/", produces={MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method= RequestMethod.GET, value = "/upload", produces={MediaType.APPLICATION_JSON_VALUE})
     public String listUploadedFiles(Model model) throws IOException {
 
         model.addAttribute("files", storageService.loadAll().map(
@@ -56,30 +56,27 @@ public class FileUploadController {
 
         return "uploadForm";
     }
-
-//    @GetMapping("/files/{filename:.+}")
+    
+    private String getVideoType(String filename) {
+    	int dot = filename.lastIndexOf(".");
+    	return filename.substring(dot+1);
+    }
+    
     @ResponseBody
-    @RequestMapping(method= RequestMethod.GET, value = "/files/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpServletResponse res) {
-
-        Resource file = storageService.loadAsResource(filename);
-        res.setHeader("Content-Type", "video/mp4");
+    @RequestMapping(method= RequestMethod.GET, value = "/files/{id}/{id2}")
+    public ResponseEntity<Resource> serveFile(@PathVariable("id") Long userId,@PathVariable("id2") Long videoId) {
+        Resource file = storageService.loadAsResource(userId, videoId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+                "attachment; filename=\"" + file.getFilename() + "\"")
+        		.header(HttpHeaders.CONTENT_TYPE, "video/"+getVideoType(file.getFilename()))
+        		.body(file);
     }
 
-//    @PostMapping("/")
-    @RequestMapping(method= RequestMethod.POST, value = "/", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method= RequestMethod.POST, value = "/upload/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Video> handleFileUpload(@RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes) {
-
-        storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-//        return "redirect:/";
-        Video video = new Video(file.getOriginalFilename());
-//        Video test = videoRepository.save(video);
-//        System.out.println(test.toString());
+            @PathVariable("id") Long userId) {
+        Video video = storageService.store(file, userId);
+        System.out.println(video.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(video);
     }
     

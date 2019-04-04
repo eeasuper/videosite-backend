@@ -2,6 +2,7 @@ package com.nano.videosite.models;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,43 +15,63 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Playlist {
 	
 	private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(name="playlist_id") long id;
-	
 	private long userId;
-	
-	//https://www.callicoder.com/hibernate-spring-boot-jpa-element-collection-demo/
-	//https://www.logicbig.com/tutorials/java-ee-tutorial/jpa/customizing-map-mapping.html
-	//Key will be order of video. 
-	@ElementCollection(fetch = FetchType.EAGER)
-	//, referencedColumnName="id"
-	@CollectionTable(name="playlist_value", joinColumns = @JoinColumn(name="playlist_id"))
-//	@CollectionTable(name="playlist_value")
-//	@MapKeyColumn(name="order")
-//	@Column(name="video_idd")
-	private Map<Integer, Video> playlistValue = new HashMap();
+	private String title;
+	private long date;
 
+//	@OneToMany
+	//Will receive playlistVideo Ids.
+//	@ElementCollection
+//	@CollectionTable(name="playlist_list",joinColumns= @JoinColumn(name="playlist_id"))
+//	@Column(name="playlistVideo_id")
+//	private Set<Long> playlistList;
+	@ManyToMany
+    @JoinTable(name="playlist_values",
+        joinColumns=@JoinColumn(name="playlist_id"),
+        inverseJoinColumns= @JoinColumn(name="video_id"))
+	private Map<Integer, Video> playlistList;
+	
 	public Playlist() {
 		
 	}
-	
+	public Playlist(long userId, String title, long date) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.title = title;
+		this.date = date;
+	}
 	public Playlist(long id, long userId, Map<Integer, Video> playlist) {
 		super();
 		this.id = id;
 		this.userId = userId;
-		this.playlistValue = playlist;
+		this.playlistList = playlist;
 	}
 	public Playlist(long userId, Map<Integer, Video> playlist) {
 		super();
 		this.id = id;
 		this.userId = userId;
-		this.playlistValue = playlist;
+		this.playlistList = playlist;
 	}
+	
+	public Playlist(long userId, String title, long date, Map<Integer, Video> playlistValue) {
+		super();
+		this.userId = userId;
+		this.title = title;
+		this.date = date;
+		this.playlistList = playlistValue;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -68,12 +89,27 @@ public class Playlist {
 	}
 
 	public Map<Integer, Video> getPlaylist() {
-		return playlistValue;
+		return playlistList;
 	}
 
 	public void setPlaylist(Map<Integer, Video> playlist) {
-		this.playlistValue = playlist;
+		this.playlistList = playlist;
 	}
-	
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public long getDate() {
+		return date;
+	}
+
+	public void setDate(long date) {
+		this.date = date;
+	}	
 	
 }

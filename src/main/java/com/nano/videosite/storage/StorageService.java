@@ -6,16 +6,18 @@ import java.util.stream.Stream;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nano.videosite.models.Video;
+
 public interface StorageService {
     void init();
 
-    void store(MultipartFile file);
+    Video store(MultipartFile file, Long userId);
 
     Stream<Path> loadAll();
 
-    Path load(String filename);
+    Path load(String filename, Long userId);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(Long userId, Long videoId);
 
     void deleteAll();
 }
