@@ -1,5 +1,6 @@
 package com.nano.videosite.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nano.videosite.models.Playlist;
-import com.nano.videosite.models.PlaylistVideo;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.services.PlaylistService;
 
@@ -45,25 +45,34 @@ public class PlaylistController {
 		return ResponseEntity.ok(playlist);
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/playlist/{id}/thumbnail", produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<byte[]> onePlaylistThumbnail(@PathVariable("id") Long playlistId) throws IOException {
+		byte[] image = playlistService.onePlaylistThumbnail(playlistId);
+	    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+	}
+	
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/order-change", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Map<Integer, Video>>editOrder(@RequestBody Map<Integer,Video> newPlaylist,@PathVariable("id") Long userId, @PathVariable("id2") Long playlistId){
+	public ResponseEntity<Map<Integer, Video>> editOrder(@RequestBody Map<Integer,Video> newPlaylist,@PathVariable("id") Long userId, @PathVariable("id2") Long playlistId){
 		Map<Integer, Video> playlist = playlistService.editOrder(playlistId,newPlaylist);
 		//Or I could return 204, with no Response Body. For Testing, return a body.
-		return ResponseEntity.ok(playlist);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//		return ResponseEntity.ok(playlist);
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/title-change", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Playlist> editTitle(@RequestBody Playlist newPlaylist,@PathVariable("id") Long playlistId){
 		Playlist playlist = playlistService.editTitle(playlistId, newPlaylist);
 		//Or I could return 204, with no Response Body. For Testing, return a body.
-		return ResponseEntity.ok(playlist);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//		return ResponseEntity.ok(playlist);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/playlist/{id}/edit/add-video", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Playlist> editAddVideo(@RequestBody List<Video> newVideo,@PathVariable("id") Long playlistId){
 		Playlist playlist = playlistService.editAddVideo(playlistId, newVideo);
 		//Or I could return 204, with no Response Body. For Testing, return a body.
-		return ResponseEntity.ok(playlist);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//		return ResponseEntity.ok(playlist);
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE, value="/playlist/{id}")

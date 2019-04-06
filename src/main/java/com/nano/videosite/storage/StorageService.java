@@ -20,4 +20,10 @@ public interface StorageService {
     Resource loadAsResource(Long userId, Long videoId);
 
     void deleteAll();
+
+	Video storeSeedFiles(MultipartFile file, Long userId, String filename);
+
+	Path loadThumbnail(String filename, Long userId);
+
+	Resource loadThumbnailAsResource(Video video);
 }

@@ -14,22 +14,21 @@ import java.nio.file.attribute.FileAttribute;
 import javax.imageio.ImageIO;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FrameGrabber.Exception;
+import org.springframework.stereotype.Service;
 
-//@Component
+import com.nano.videosite.storage.StorageException;
+
+@Service
 public class VideoThumbnails {
 	//https://stackoverflow.com/questions/37163978/how-to-get-a-thumbnail-of-an-uploaded-video-file/42386323
 
-    protected String ffmpegApp;
-
-    public VideoThumbnails(String ffmpegApp)
-    {
-        this.ffmpegApp = ffmpegApp;
-    }
+    private final String rootLoc = "thumbnail-dir";
 
     public void getThumb(String videoFilename, String thumbFilename, int width, int height,int hour, int min, float sec)
       throws IOException, InterruptedException
     {
-        ProcessBuilder processBuilder = new ProcessBuilder(ffmpegApp, "-y", "-i", videoFilename, "-vframes", "1",
+        ProcessBuilder processBuilder = new ProcessBuilder("ffmpegApp", "-y", "-i", videoFilename, "-vframes", "1",
     "-ss", hour + ":" + min + ":" + sec, "-f", "mjpeg", "-s", width + "*" + height, "-an", thumbFilename);
         Process process = processBuilder.start();
         InputStream stderr = process.getErrorStream();
@@ -40,26 +39,35 @@ public class VideoThumbnails {
         process.waitFor();
     }
 
-    public void main() throws Exception, IOException
-    {
-//    	Path outputFolder = Paths.get("thumbnail-dir", "1", "1");
-//    	System.out.println(outputFolder);
-//    	Path inputFolder = Paths.get("seeding-dir", "yui-ura-on.mp4");
-//    	System.out.println(inputFolder);
-    	Path b = Paths.get("seeding-dir/yui-ura-on.mp4");
-        FFmpegFrameGrabber g = new FFmpegFrameGrabber(b.toString());
-        g.setFormat("mp4");
+//    public void main() throws Exception, IOException
+//    {
+    public void thumbnail(Long userId, String realFilename, Path videoLocation) throws Exception, IOException {
+    	// get video here.
+        FFmpegFrameGrabber g = new FFmpegFrameGrabber(videoLocation.toString());
+        g.setFormat(getContentType(realFilename));
         g.start();
 
-        for (int i = 0 ; i < 50 ; i++) {
-        	Path a = Paths.get("thumbnail-dir");
-            ImageIO.write(g.grab().getBufferedImage(), "png", new File(a.toString() +"/"+"yui-ura-on-" + System.currentTimeMillis() + ".png"));
-            break;
-        }
+    	Path saveLocation = createDirectory(userId).resolve(realFilename.substring(0,realFilename.lastIndexOf(".")));
+    	ImageIO.write(g.grab().getBufferedImage(), "png", new File(saveLocation.toString() + ".png"));
 
-         g.stop();
+        g.stop();
+    }
+    private Path createDirectory(Long userId) {
+    	Path location = Paths.get(this.rootLoc + "/" +this.rootLoc + "-"+userId.toString());
+    	try {
+    		Files.createDirectories(location);
+    	} catch (IOException e) {
+    		throw new StorageException("Could not create custom directory for userId: "+userId.toString(), e);
+    	}
+    	return location;
+    }
+    private String getContentType(String filename) {
+    	int dot = filename.lastIndexOf(".");
+        return filename.substring(dot+1);
     }
 }
+
+
 /*
  *
 	

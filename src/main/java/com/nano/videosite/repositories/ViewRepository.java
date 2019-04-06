@@ -8,6 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import com.nano.videosite.models.ViewVideo;
 
 public interface ViewRepository extends CrudRepository<ViewVideo, Long> {
-	public Optional<ViewVideo> findByIpAndFileName(String ip, String filename);
-	public List<ViewVideo> findByFileName(String filename);
+	public Optional<ViewVideo> findByIpAndVideoId(String ip, Long videoId);
+	public List<ViewVideo> findByVideoId(Long videoId);
 }

@@ -28,7 +28,6 @@ import com.nano.videosite.models.Playlist;
 import com.nano.videosite.models.User;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.PlaylistRepository;
-import com.nano.videosite.repositories.PlaylistVideoRepository;
 import com.nano.videosite.repositories.UserRepository;
 import com.nano.videosite.repositories.VideoRepository;
 import com.nano.videosite.services.PlaylistService;
@@ -56,45 +55,42 @@ public class VideositeBackendApplication {
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
 	@Autowired
-	PlaylistVideoRepository playlistVidRepository;
-	@Autowired
 	FileSystemStorageService uploadService;
     @Bean
     CommandLineRunner init(StorageService storageService) {
+    	//==== Set up seeding ====
         return (args) -> {
             storageService.deleteAll();
             storageService.init();
+            Long time = new Date().getTime();
+            //===Create a user:
             User u1 = new User("name", "username", this.passwordEncoder.encode("password"), "email");
             userRepository.save(u1);
-            Video v1 = new Video("yui-ura-on.mp4", new Date().getTime());
-            Video v2 = new Video("test.mp4",new Date().getTime());
-            videoRepository.save(v1);
-            videoRepository.save(v2);
-            Map m1 = new HashMap();
-            m1.put(1, v2);
-            m1.put(2, v1);
-//            Set<Long> s1 = new HashSet<Long>();
-            Playlist p1 = new Playlist(u1.getId(), "testTitle", new Date().getTime());
-//            PlaylistVideo pv1 = playlistVidRepository.save(new PlaylistVideo(v1.getId(), p1.getId(),1));
-//            PlaylistVideo pv2 = playlistVidRepository.save(new PlaylistVideo(v2.getId(), p1.getId(),2));
-//            s1.add(pv1.getId());
-//            s1.add(pv2.getId());
+            //===Create new instances of Video.
+            Video v1 = new Video("yui-ura-on-"+time+".mp4", time,u1.getId());
+            Video v2 = new Video("test-"+time+".mp4",time,u1.getId());
+            //===Convert the videos in /seeding-dir  to an upload File.
             MultipartFile video = getVideoFile(v1.getFilename());
             MultipartFile video2 = getVideoFile(v2.getFilename());
-            uploadService.store(video, u1.getId());
-            uploadService.store(video2, u1.getId());
+            //===Store the converted videos into /upload-dir and store thumbnails as well.
+            Video video11 = uploadService.storeSeedFiles(video, u1.getId(), v1.getFilename());
+            Video video22 = uploadService.storeSeedFiles(video2, u1.getId(), v2.getFilename());
+            //===Create the playlists for the videos.
+            Playlist p1 = new Playlist(u1.getId(), "testTitle", time);
+            Map<Integer, Video> m1 = new HashMap<Integer, Video>();
+            m1.put(1, video22);
+            m1.put(2, video11);
             p1.setPlaylist(m1);
-            playlistRepository.save(p1);
-            VideoThumbnails test = new VideoThumbnails("ffmpegApp");
-            test.main();
-            
+            playlistRepository.save(p1);            
         };
     }
     
+    //Important method to seed video files. Makes video file into an 'uploaded' file.
     private MultipartFile getVideoFile(String videoName) throws IOException {
 //    	Path path = Paths.get("upload-dir/upload-dir-1/"+videoName);
-    	File file = new File("seeding-dir/"+videoName);
-    	FileItem fileItem = new DiskFileItem(videoName+"-"+new Date().getTime(), Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length(), file.getParentFile());
+    	String realVideoName = videoName.substring(0,videoName.lastIndexOf("-"))+".mp4"; 
+    	File file = new File("seeding-dir/"+realVideoName);
+    	FileItem fileItem = new DiskFileItem(realVideoName, Files.probeContentType(file.toPath()), false, realVideoName, (int) file.length(), file.getParentFile());
     	try {
     		IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
     	} catch (final IOException e) {

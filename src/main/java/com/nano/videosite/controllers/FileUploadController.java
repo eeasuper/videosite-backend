@@ -45,18 +45,6 @@ public class FileUploadController {
         this.storageService = storageService;
     }
     
-//    @GetMapping("/")
-    @RequestMapping(method= RequestMethod.GET, value = "/upload", produces={MediaType.APPLICATION_JSON_VALUE})
-    public String listUploadedFiles(Model model) throws IOException {
-
-        model.addAttribute("files", storageService.loadAll().map(
-                path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
-                        "serveFile", path.getFileName().toString()).build().toString())
-                .collect(Collectors.toList()));
-
-        return "uploadForm";
-    }
-    
     private String getVideoType(String filename) {
     	int dot = filename.lastIndexOf(".");
     	return filename.substring(dot+1);
@@ -87,3 +75,15 @@ public class FileUploadController {
         return ResponseEntity.notFound().build();
     }
 }
+
+//@GetMapping("/")
+//@RequestMapping(method= RequestMethod.GET, value = "/upload", produces={MediaType.APPLICATION_JSON_VALUE})
+//public String listUploadedFiles(Model model) throws IOException {
+//
+//  model.addAttribute("files", storageService.loadAll().map(
+//          path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
+//                  "serveFile", path.getFileName().toString()).build().toString())
+//          .collect(Collectors.toList()));
+//
+//  return "uploadForm";
+//}

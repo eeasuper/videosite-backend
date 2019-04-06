@@ -8,15 +8,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import org.springframework.core.io.Resource;
+
 @Entity
 public class Video {
 	public @Column(nullable=false) String filename;
 	private @GeneratedValue @Id @Column(name="video_id") Long id;
-	private Long date;
+	private @Column(name="uploaded_date") Long date;
+	private Long uploaderId;
 	
 	private @ManyToMany(mappedBy= "playlistList") Set<Playlist> playlists;
+	//ordered can probably be erased.
 	private int ordered;
 	
+	private String title;
+	private String description;
+	private Long view = (long) 0;
+	private String thumbnailImageBase64;
+//	private Resource thumbnailImage;
 	public Video() {
 	}
 	public Video(Long id,String filename, Long date) {
@@ -40,6 +49,49 @@ public class Video {
 		this.filename = filename;
 		this.id = id;
 		this.ordered = ordered;
+	}
+	public Video(String filename, Long id, Long date, Long uploaderId) {
+		super();
+		this.filename = filename;
+		this.id = id;
+		this.date = date;
+		this.uploaderId = uploaderId;
+	}
+	public Video(String filename, Long date, Long uploaderId) {
+		super();
+		this.filename = filename;
+		this.date = date;
+		this.uploaderId = uploaderId;
+	}
+	public Video(Long id, String title, String description) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.description = description;
+	}
+//	public Video(Long id, String title, String description, Resource thumbnailImage) {
+//		super();
+//		this.id = id;
+//		this.title = title;
+//		this.description = description;
+//	}
+	public Long getView() {
+		return view;
+	}
+	public void setView(Long view) {
+		this.view = view;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public Long getDate() {
 		return date;
@@ -65,5 +117,17 @@ public class Video {
 	public void setOrdered(int ordered) {
 		this.ordered = ordered;
 	}
+	public Long getUploaderId() {
+		return uploaderId;
+	}
+	public void setUploaderId(Long uploaderId) {
+		this.uploaderId = uploaderId;
+	}
+//	public Resource getThumbnailImage() {
+//		return thumbnailImage;
+//	}
+//	public void setThumbnailImage(Resource thumbnailImageBase64) {
+//		this.thumbnailImage = thumbnailImageBase64;
+//	}
 	
 }

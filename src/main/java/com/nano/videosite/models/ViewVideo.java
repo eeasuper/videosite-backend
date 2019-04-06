@@ -9,15 +9,15 @@ public class ViewVideo {
 	private String ip;
 	private long date;
 	//change filename to id of Video later.
-	private String fileName;
+	private Long videoId;
 	private @Id @GeneratedValue Long id;
 	public ViewVideo() {
 	}
-	public ViewVideo(String ip, long date, String fileName) {
+	public ViewVideo(String ip, long date, Long fileName) {
 		super();
 		this.ip = ip;
 		this.date = date;
-		this.fileName = fileName;
+		this.videoId = fileName;
 	}
 	
 	public String getIp() {
@@ -32,11 +32,11 @@ public class ViewVideo {
 	public void setDate(long date) {
 		this.date = date;
 	}
-	public String getFileName() {
-		return fileName;
+	public Long getVideoId() {
+		return videoId;
 	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setVideoId(Long fileName) {
+		this.videoId = fileName;
 	}
 	
 	

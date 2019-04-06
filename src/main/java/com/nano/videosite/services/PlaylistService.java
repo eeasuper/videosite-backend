@@ -1,9 +1,16 @@
 package com.nano.videosite.services;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +18,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.nano.videosite.models.Playlist;
-import com.nano.videosite.models.PlaylistVideo;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.PlaylistRepository;
 import com.nano.videosite.repositories.VideoRepository;
@@ -40,6 +46,22 @@ public class PlaylistService {
 	public Map<Integer, Video> onePlaylist(Long playlistId){
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
 		return playlist.getPlaylist();
+	}
+	
+	public byte[] onePlaylistThumbnail(Long playlistId) throws IOException {
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Video video = playlist.getPlaylist().get(1);
+		String filename = video.getFilename().substring(0,video.getFilename().lastIndexOf("."));
+		 // open image
+		File imgPath = new File("thumbnail-dir/thumbnail-dir-"+video.getUploaderId()+"/"+filename+".png");
+		System.out.println(imgPath.toString());
+		BufferedImage bufferedImage = ImageIO.read(imgPath);
+
+		 // get DataBufferBytes from Raster
+		WritableRaster raster = bufferedImage.getRaster();
+		DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
+
+		return data.getData();
 	}
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
