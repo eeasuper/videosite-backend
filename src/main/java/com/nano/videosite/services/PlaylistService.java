@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Playlist;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.PlaylistRepository;
@@ -35,7 +36,7 @@ public class PlaylistService {
 	}
 	
 	public Set<Map<Integer,Video>> allPlaylists(Long userId){
-		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow();
+		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
 		Set set = new HashSet();
 		playlist.forEach((val)->{
 			set.add(val.getPlaylist());
@@ -44,12 +45,12 @@ public class PlaylistService {
 	}
 	
 	public Map<Integer, Video> onePlaylist(Long playlistId){
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		return playlist.getPlaylist();
 	}
 	
 	public byte[] onePlaylistThumbnail(Long playlistId) throws IOException {
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		Video video = playlist.getPlaylist().get(1);
 		String filename = video.getFilename().substring(0,video.getFilename().lastIndexOf("."));
 		 // open image
@@ -65,22 +66,22 @@ public class PlaylistService {
 	}
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		playlist.setPlaylist(newPlaylist);
 		return playlistRepository.save(playlist).getPlaylist();
 	}
 	
 	public Playlist editTitle(Long playlistId, Playlist newPlaylist){
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		playlist.setTitle(newPlaylist.getTitle());
 		return playlistRepository.save(playlist);
 	}
 	
 	public Playlist editAddVideo(Long playlistId, List<Video> newVideo) {
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow();
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		Map<Integer, Video> playlistList = playlist.getPlaylist();
 		newVideo.forEach((val)->{
-			Video video = videoRepository.findById(val.getId()).orElseThrow();
+			Video video = videoRepository.findById(val.getId()).orElseThrow(()->new ElementNotFoundException());
 			playlistList.put(playlistList.size()+1, video);
 		});
 		playlist.setPlaylist(playlistList);

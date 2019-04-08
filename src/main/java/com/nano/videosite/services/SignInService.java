@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.User;
 import com.nano.videosite.repositories.UserRepository;
 
@@ -40,7 +41,7 @@ public class SignInService {
 		
 //		String usernameFromToken = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
 //                .getSubject();
-		User user = repository.findByUsername(username).orElseThrow();
+		User user = repository.findByUsername(username).orElseThrow(()->new ElementNotFoundException());
 		
 		boolean matches = this.passwordEncoder.matches(password, user.getPassword());
 		

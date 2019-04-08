@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.models.ViewVideo;
 import com.nano.videosite.repositories.VideoRepository;
@@ -44,14 +45,14 @@ public class ViewService {
 	}
 	
 	private void setViewCount(ViewVideo view) {
-		Video vid = videoRepository.findById(view.getVideoId()).orElseThrow();
+		Video vid = videoRepository.findById(view.getVideoId()).orElseThrow(()->new ElementNotFoundException());
 		Long viewCount = vid.getView() + 1;
 		vid.setView(viewCount);
 		videoRepository.save(vid);
 	}
 	
 	public Long getViewCount(Video video) {
-		Video vid = videoRepository.findById(video.getId()).orElseThrow();
+		Video vid = videoRepository.findById(video.getId()).orElseThrow(()->new ElementNotFoundException());
 		return vid.getView();
 		
 		//NOTE: Later, change code to get view count through a SUM selection of sql.

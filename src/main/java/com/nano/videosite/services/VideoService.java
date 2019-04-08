@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.VideoRepository;
 import com.nano.videosite.storage.FileSystemStorageService;
@@ -27,7 +28,7 @@ public class VideoService {
 	FileSystemStorageService storageService;
 	
 	public Video add(Video video) {
-		Video vid = videoRepository.findById(video.getId()).orElseThrow();
+		Video vid = videoRepository.findById(video.getId()).orElseThrow(()->new ElementNotFoundException());
 		vid.setDescription(video.getDescription());
 		vid.setTitle(video.getTitle());
 		return videoRepository.save(vid);
@@ -47,7 +48,7 @@ public class VideoService {
 //	}
 	
 	public Resource getOneThumbnail(Long videoId) throws IOException {
-		Video video = videoRepository.findById(videoId).orElseThrow();
+		Video video = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
 		Resource image = storageService.loadThumbnailAsResource(video);
 		return image;
 	}
@@ -70,7 +71,7 @@ public class VideoService {
 	}
 	
 	public Video getVideoDescription(Long videoId) {
-		return videoRepository.findById(videoId).orElseThrow();
+		return videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
 		
 	}
 }

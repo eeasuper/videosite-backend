@@ -22,6 +22,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.VideoRepository;
 import com.nano.videosite.thumbnails.VideoThumbnails;
@@ -164,7 +165,7 @@ public class FileSystemStorageService implements StorageService{
     @Override
     public Resource loadAsResource(Long userId, Long videoId) {
         try {
-        	Video video = videoRepository.findById(videoId).orElseThrow();
+        	Video video = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
             Path file = load(video.getFilename(), userId);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
