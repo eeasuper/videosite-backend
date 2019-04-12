@@ -28,6 +28,17 @@ public class Video {
 //	private Resource thumbnailImage;
 	public Video() {
 	}
+	
+	public Video(String filename, Long date, Long uploaderId, String title, String description, Long view) {
+		super();
+		this.filename = filename;
+		this.date = date;
+		this.uploaderId = uploaderId;
+		this.title = title;
+		this.description = description;
+		this.view = view;
+	}
+
 	public Video(Long id,String filename, Long date) {
 		super();
 		this.filename = filename;

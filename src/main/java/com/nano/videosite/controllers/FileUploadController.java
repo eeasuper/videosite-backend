@@ -51,9 +51,9 @@ public class FileUploadController {
     }
     
     @ResponseBody
-    @RequestMapping(method= RequestMethod.GET, value = "/files/{id}/{id2}")
-    public ResponseEntity<Resource> serveFile(@PathVariable("id") Long userId,@PathVariable("id2") Long videoId) {
-        Resource file = storageService.loadAsResource(userId, videoId);
+    @RequestMapping(method= RequestMethod.GET, value = "/video/view/{id}")
+    public ResponseEntity<Resource> serveFile(@PathVariable("id") Long videoId) {
+        Resource file = storageService.loadAsResource(videoId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"")
         		.header(HttpHeaders.CONTENT_TYPE, "video/"+getVideoType(file.getFilename()))

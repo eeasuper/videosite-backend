@@ -35,16 +35,29 @@ public class PlaylistService {
 		return playlistRepository.save(newPlaylist);
 	}
 	
-	public Set<Map<Integer,Video>> allPlaylists(Long userId){
+//	public Set<Map<Integer,Video>> allPlaylists(Long userId){
+//		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
+//		Set set = new HashSet();
+//		playlist.forEach((val)->{
+//			set.add(val.getPlaylist());
+//		});
+//		return set;
+//	}
+	public Set<Playlist> allPlaylists(Long userId){
 		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
 		Set set = new HashSet();
 		playlist.forEach((val)->{
-			set.add(val.getPlaylist());
+			set.add(val);
 		});
 		return set;
 	}
 	
-	public Map<Integer, Video> onePlaylist(Long playlistId){
+	public Playlist onePlaylist(Long playlistId) {
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
+		return playlist;
+	}
+	
+	public Map<Integer, Video> onePlaylistList(Long playlistId){
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		return playlist.getPlaylist();
 	}
@@ -67,7 +80,19 @@ public class PlaylistService {
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
+		playlist.getPlaylist().forEach((key, val)->{
+			System.out.println(key);
+			System.out.println(val.getFilename());
+		});
 		playlist.setPlaylist(newPlaylist);
+//		newPlaylist.forEach((val,v)->{
+//			System.out.println(val);
+//			System.out.println();
+//		});
+		playlist.getPlaylist().forEach((key, val)->{
+			System.out.println(key);
+			System.out.println(val.getFilename());
+		});
 		return playlistRepository.save(playlist).getPlaylist();
 	}
 	
@@ -90,6 +115,5 @@ public class PlaylistService {
 	
 	public void deletePlaylist(Long playlistId) {
 		playlistRepository.deleteById(playlistId);
-		
 	}
 }

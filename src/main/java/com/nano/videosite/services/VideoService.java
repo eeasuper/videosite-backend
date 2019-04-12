@@ -3,12 +3,18 @@ package com.nano.videosite.services;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -47,11 +53,23 @@ public class VideoService {
 //		return Base64.encodeBase64String(data.getData());
 //	}
 	
-	public Resource getOneThumbnail(Long videoId) throws IOException {
+//	public Resource getOneThumbnail(Long videoId) throws IOException {
+//		Video video = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
+//		Resource image = storageService.loadThumbnailAsResource(video);
+//		return image;
+//	}
+	
+	public byte[] getOneThumbnail(Long videoId) throws IOException{
 		Video video = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
-		Resource image = storageService.loadThumbnailAsResource(video);
-		return image;
+		String filename = video.getFilename().substring(0, video.getFilename().lastIndexOf(".")) + ".png";
+//		Path file = Paths.get("thumbnail-dir/thumbnail-dir-"+video.getUploaderId().toString()).resolve(filename);
+		String file = "thumbnail-dir/thumbnail-dir-"+video.getUploaderId().toString()+"/"+filename;
+		byte[] fileContent = FileUtils.readFileToByteArray(new File(file));
+		System.out.println(file);
+		InputStream in = new ByteArrayInputStream(fileContent);
+		return IOUtils.toByteArray(in);
 	}
+	 
 	
 	public List<Video> getRandomVideoList(){
 		List<Video> videoList = videoRepository.getRandomList();

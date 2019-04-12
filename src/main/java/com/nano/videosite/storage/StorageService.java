@@ -17,13 +17,13 @@ public interface StorageService {
 
     Path load(String filename, Long userId);
 
-    Resource loadAsResource(Long userId, Long videoId);
-
     void deleteAll();
-
-	Video storeSeedFiles(MultipartFile file, Long userId, String filename);
 
 	Path loadThumbnail(String filename, Long userId);
 
 	Resource loadThumbnailAsResource(Video video);
+
+	Resource loadAsResource(Long videoId);
+
+	Video storeSeedFiles(MultipartFile file, Long userId, String filename, Video video);
 }

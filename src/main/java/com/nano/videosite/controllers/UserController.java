@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nano.videosite.models.User;
 import com.nano.videosite.services.SignInService;
 import com.nano.videosite.services.SignUpService;
+import com.nano.videosite.services.UserService;
 
 @RestController
 public class UserController {
@@ -25,6 +27,8 @@ public class UserController {
 	SignUpService signupService;
 	@Autowired
 	SignInService signinService;
+	@Autowired
+	UserService userService;
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
 	ResponseEntity<?> newUser(@RequestBody User newUser) throws URISyntaxException {
@@ -73,5 +77,11 @@ public class UserController {
 		}else {
 			return ResponseEntity.status(status).build();
 		}
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/user/{id}",  produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
+		User user = userService.getUser(id);
+		return ResponseEntity.ok(user);
 	}
 }

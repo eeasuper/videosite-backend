@@ -67,14 +67,14 @@ public class VideositeBackendApplication {
             User u1 = new User("name", "username", this.passwordEncoder.encode("password"), "email");
             userRepository.save(u1);
             //===Create new instances of Video.
-            Video v1 = new Video("yui-ura-on-"+time+".mp4", time,u1.getId());
-            Video v2 = new Video("test-"+time+".mp4",time,u1.getId());
+            Video v1 = new Video("yui-ura-on-"+time+".mp4", time,u1.getId(),"yui-ura-on-funny","very funny video",(long)0);
+            Video v2 = new Video("test-"+time+".mp4",time,u1.getId(),"test-video", "just a test description", (long) 0);
             //===Convert the videos in /seeding-dir  to an upload File.
             MultipartFile video = getVideoFile(v1.getFilename());
             MultipartFile video2 = getVideoFile(v2.getFilename());
             //===Store the converted videos into /upload-dir and store thumbnails as well.
-            Video video11 = uploadService.storeSeedFiles(video, u1.getId(), v1.getFilename());
-            Video video22 = uploadService.storeSeedFiles(video2, u1.getId(), v2.getFilename());
+            Video video11 = uploadService.storeSeedFiles(video, u1.getId(), v1.getFilename(),v1);
+            Video video22 = uploadService.storeSeedFiles(video2, u1.getId(), v2.getFilename(),v2);
             //===Create the playlists for the videos.
             Playlist p1 = new Playlist(u1.getId(), "testTitle", time);
             Map<Integer, Video> m1 = new HashMap<Integer, Video>();

@@ -14,9 +14,10 @@
         554536956007.mp4","id":1,"date":1554536956007,"uploaderId":1,"ordered":0,"title"
         :null,"description":null,"view":0}]
 4. Get Playlist
-  curl -v localhost:8080/playlist/1 -H "Accept: application/json" --header "Content-Type: application/json"
+  curl -v localhost:8080/playlist/list/1 -H "Accept: application/json" --header "Content-Type: application/json"
     Answer: {"1":{"filename":"test.mp4","id":2},"2":{"filename":"yui-ura-on.mp4","id":1}}
-
+	Get Playlist(the whole thing):
+	curl -v localhost:8080/playlist/1
 5. Same as #4.
 
 6. Edit Playlist (Changed Order)

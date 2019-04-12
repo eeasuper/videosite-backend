@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nano.videosite.models.Video;
@@ -32,12 +33,20 @@ public class VideoController {
 		Video vid = videoService.add(video);
 		return ResponseEntity.status(HttpStatus.CREATED).body(vid);
 	}
+
+	//====Both getOneThumbnail methods work====
+//	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail", produces= MediaType.IMAGE_PNG_VALUE)
+//	public ResponseEntity<Resource> getOneThumbnail(@PathVariable("id") Long videoId) throws IOException{
+//		Resource image = videoService.getOneThumbnail(videoId);
+//	    return ResponseEntity.ok().body(image);
+//	    //.header(HttpHeaders.CONTENT_DISPOSITION,
+//        //"attachment; filename=\"" + image.getFilename() + "\"").contentType(MediaType.IMAGE_PNG)
+//	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail")
-	public ResponseEntity<Resource> getOneThumbnail(@PathVariable("id") Long videoId) throws IOException{
-		Resource image = videoService.getOneThumbnail(videoId);
-	    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + image.getFilename() + "\"").contentType(MediaType.IMAGE_JPEG).body(image);
+	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail", produces= MediaType.IMAGE_PNG_VALUE)
+	public @ResponseBody ResponseEntity<byte[]> getOneThumbnail(@PathVariable("id") Long videoId) throws IOException{
+		byte[] image = videoService.getOneThumbnail(videoId);
+	    return ResponseEntity.ok().body(image);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/video/random", produces={MediaType.APPLICATION_JSON_VALUE})

@@ -108,7 +108,7 @@ public class FileSystemStorageService implements StorageService{
     
     //Copy the files in seeding-dir to a dir in upload-dir.
     @Override
-    public Video storeSeedFiles(MultipartFile file, Long userId, String filename) {
+    public Video storeSeedFiles(MultipartFile file, Long userId, String filename,Video video) {
         Long date = new Date().getTime();
         Path location = createDirectory(userId);
         try {
@@ -140,7 +140,7 @@ public class FileSystemStorageService implements StorageService{
 		} catch (IOException e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);
 		}
-        return videoRepository.save(new Video(filename, Long.parseLong(filename.substring(filename.lastIndexOf("-")+1,filename.lastIndexOf("."))), userId));
+        return videoRepository.save(new Video(filename, Long.parseLong(filename.substring(filename.lastIndexOf("-")+1,filename.lastIndexOf("."))), userId,video.getTitle(),video.getDescription(),video.getView()));
         
     }
     
@@ -163,10 +163,10 @@ public class FileSystemStorageService implements StorageService{
     }
 
     @Override
-    public Resource loadAsResource(Long userId, Long videoId) {
+    public Resource loadAsResource(Long videoId) {
         try {
         	Video video = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
-            Path file = load(video.getFilename(), userId);
+            Path file = load(video.getFilename(), video.getUploaderId());
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
