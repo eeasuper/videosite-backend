@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nano.videosite.models.Video;
+import com.nano.videosite.services.JWTAuthenticationService;
 import com.nano.videosite.services.VideoService;
 
 @RestController
@@ -26,12 +28,22 @@ public class VideoController {
 	
 	@Autowired
 	VideoService videoService;
-	
-	@RequestMapping(method=RequestMethod.POST, value="/video", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Video> add(@RequestBody Video video){
+	@Autowired
+	JWTAuthenticationService jwtService;
+	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/all", produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<List<Video>> all(@PathVariable("id") Long userId){
+		List<Video> videos = this.videoService.all(userId);
+		return ResponseEntity.ok(videos);
+	}
+	@RequestMapping(method=RequestMethod.PUT, value="/video", produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Video> add(@RequestBody Video video, @RequestHeader("Authorization") String authorization){
 		//Video is uploaded in FileUploadController. This is to save title and descriptions for the uploaded video.
-		Video vid = videoService.add(video);
-		return ResponseEntity.status(HttpStatus.CREATED).body(vid);
+		if(jwtService.isAuthenticated(authorization)) {
+			Video vid = videoService.add(video);
+			return ResponseEntity.ok(vid);
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
 	}
 
 	//====Both getOneThumbnail methods work====

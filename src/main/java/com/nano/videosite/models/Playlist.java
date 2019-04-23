@@ -28,7 +28,7 @@ public class Playlist {
 	private long userId;
 	private String title;
 	private long date;
-
+	private String username;
 //	@OneToMany
 	//Will receive playlistVideo Ids.
 //	@ElementCollection
@@ -43,6 +43,10 @@ public class Playlist {
 	
 	public Playlist() {
 		
+	}
+	public Playlist(String title) {
+		super();
+		this.title = title;
 	}
 	public Playlist(long userId, String title, long date) {
 		super();
@@ -110,6 +114,12 @@ public class Playlist {
 
 	public void setDate(long date) {
 		this.date = date;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}	
 	
 }

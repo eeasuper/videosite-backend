@@ -24,7 +24,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class SignInService {
 	@Autowired
 	UserRepository repository;
-	
+	@Autowired
+	JWTAuthenticationService jwtService;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -39,8 +40,6 @@ public class SignInService {
 	public User signIn(String username, String password, HttpServletResponse res){
 		//https://blog.restcase.com/rest-api-error-codes-101/
 		
-//		String usernameFromToken = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
-//                .getSubject();
 		User user = repository.findByUsername(username).orElseThrow(()->new ElementNotFoundException());
 		
 		boolean matches = this.passwordEncoder.matches(password, user.getPassword());
@@ -53,17 +52,7 @@ public class SignInService {
 		
 		//does password inside spring token have to be encoded?
 		if(matches) {
-			Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
-			authentication.isAuthenticated();
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			
-	    	Claims userClaim = Jwts.claims();
-	    	userClaim.put("usr_id", user.getId());
-	    	userClaim.put("sub", username);
-	        String JWT = Jwts.builder()
-	        		.setClaims(userClaim)
-	                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
-	                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
+			String JWT = jwtService.setAuthentication(user.getId(), username, password);
 			user.setToken(JWT);
 		}
 		user.setPassword(null);

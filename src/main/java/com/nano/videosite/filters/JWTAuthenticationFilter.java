@@ -27,13 +27,16 @@ public class JWTAuthenticationFilter implements Filter{
 	public JWTAuthenticationFilter(UserRepository repository){
 		this.repository = repository;
 	}
-
-	private static final List<String> urlsNotRequiringAuth = new ArrayList<String>(
-			Arrays.asList("/login","/register","/h2-console")
+	private static final List<String> urlsRequiringAuth = new ArrayList<String>(
+			Arrays.asList("/video","/")
 			);
+//	private static final List<String> urlsNotRequiringAuth = new ArrayList<String>(
+//			Arrays.asList("/login","/register","/h2-console")
+//			);
 	
-	private static boolean checkAuthIsNotRequired(String uri) {
-		return urlsNotRequiringAuth.stream().anyMatch(uri::equals);
+	private static boolean checkAuthIsRequired(String uri) {
+
+		return urlsRequiringAuth.stream().anyMatch(uri::equals);
 	}
 	
    @Override
@@ -42,12 +45,13 @@ public class JWTAuthenticationFilter implements Filter{
 
        System.out.println("JWTAuthenticationFilter.doFilter");
        HttpServletRequest req = (HttpServletRequest) servletRequest;
-       String uri = req.getRequestURI().toString();
+       String uri = req.getRequestURI();
        System.out.println(uri);
+       String method = req.getMethod();
        HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-       if(!checkAuthIsNotRequired(uri)) {
-    	   System.out.println("going through auth");
+       if(!checkAuthIsRequired(uri)) {
+//    	   System.out.println("going through auth");
 	       Authentication authentication = TokenAuthenticationService
 	               .getAuthentication((HttpServletRequest) servletRequest);
 	       //authentication here is a 'hollow' usernamepasswordtoken with just the username set as authentication.

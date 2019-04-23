@@ -1,27 +1,19 @@
 package com.nano.videosite.services;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
+import com.nano.videosite.repositories.UserRepository;
 import com.nano.videosite.repositories.VideoRepository;
 import com.nano.videosite.storage.FileSystemStorageService;
 
@@ -29,9 +21,19 @@ import com.nano.videosite.storage.FileSystemStorageService;
 public class VideoService {
 	@Autowired
 	VideoRepository videoRepository;
-	
+	@Autowired
+	UserRepository userRepository;
 	@Autowired
 	FileSystemStorageService storageService;
+	
+	public List<Video> all(Long userId){
+		List<Video> list =  this.videoRepository.findByUploaderIdOrderByDateDesc(userId).orElseThrow(()->new ElementNotFoundException());
+		list.forEach((vid)->{
+			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			vid.setUploaderUsername(username);
+		});
+		return list;
+	}
 	
 	public Video add(Video video) {
 		Video vid = videoRepository.findById(video.getId()).orElseThrow(()->new ElementNotFoundException());
@@ -74,6 +76,8 @@ public class VideoService {
 	public List<Video> getRandomVideoList(){
 		List<Video> videoList = videoRepository.getRandomList();
 		videoList.forEach((vid)->{
+			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			vid.setUploaderUsername(username);
 			//use method getThumbnail if I think I can make front-end use the base64 for image.
 //			vid.setThumbnailImage(storageService.loadThumbnailAsResource(vid));
 		});
@@ -83,13 +87,17 @@ public class VideoService {
 	public List<Video> getRecentVideoList(Long uploaderId){
 		List<Video> videoList = videoRepository.findFirst6ByUploaderIdOrderByDateAsc(uploaderId);
 		videoList.forEach((vid)->{
+			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			vid.setUploaderUsername(username);
 //			vid.setThumbnailImage(storageService.loadThumbnailAsResource(vid));
 		});
 		return videoList;
 	}
 	
 	public Video getVideoDescription(Long videoId) {
-		return videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
-		
+		Video vid= videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
+		String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+		vid.setUploaderUsername(username);
+		return vid;
 	}
 }

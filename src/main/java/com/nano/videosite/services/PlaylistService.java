@@ -14,13 +14,12 @@ import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Playlist;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.PlaylistRepository;
+import com.nano.videosite.repositories.UserRepository;
 import com.nano.videosite.repositories.VideoRepository;
 
 @Service
@@ -30,6 +29,9 @@ public class PlaylistService {
 	PlaylistRepository playlistRepository;
 	@Autowired
 	VideoRepository videoRepository;
+	@Autowired
+	UserRepository userRepository;
+
 	
 	public Playlist add(Playlist newPlaylist) {
 		return playlistRepository.save(newPlaylist);
@@ -45,6 +47,10 @@ public class PlaylistService {
 //	}
 	public Set<Playlist> allPlaylists(Long userId){
 		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
+		playlist.forEach((val)->{
+			String username = userRepository.findById(val.getUserId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			val.setUsername(username);
+		});
 		Set set = new HashSet();
 		playlist.forEach((val)->{
 			set.add(val);
@@ -54,6 +60,10 @@ public class PlaylistService {
 	
 	public Playlist onePlaylist(Long playlistId) {
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
+		playlist.getPlaylist().forEach((i,vid)->{
+			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			vid.setUploaderUsername(username);
+		});
 		return playlist;
 	}
 	

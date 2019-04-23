@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="SiteUser")
 public class User {
 	private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) long id;
 	private @Column(nullable=false) String  name;

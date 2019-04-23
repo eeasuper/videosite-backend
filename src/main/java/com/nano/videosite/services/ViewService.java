@@ -51,8 +51,8 @@ public class ViewService {
 		videoRepository.save(vid);
 	}
 	
-	public Long getViewCount(Video video) {
-		Video vid = videoRepository.findById(video.getId()).orElseThrow(()->new ElementNotFoundException());
+	public Long getViewCount(Long videoId) {
+		Video vid = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
 		return vid.getView();
 		
 		//NOTE: Later, change code to get view count through a SUM selection of sql.

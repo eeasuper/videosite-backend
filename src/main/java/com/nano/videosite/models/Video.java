@@ -16,6 +16,7 @@ public class Video {
 	private @GeneratedValue @Id @Column(name="video_id") Long id;
 	private @Column(name="uploaded_date") Long date;
 	private Long uploaderId;
+	private String uploaderUsername;
 	
 	private @ManyToMany(mappedBy= "playlistList") Set<Playlist> playlists;
 	//ordered can probably be erased.
@@ -28,7 +29,19 @@ public class Video {
 //	private Resource thumbnailImage;
 	public Video() {
 	}
-	
+	public Video(Long id) {
+		this.id = id;
+	}
+	public Video(String filename, Long date, Long uploaderId, String uploaderUsername, String title, String description, Long view) {
+		super();
+		this.filename = filename;
+		this.date = date;
+		this.uploaderId = uploaderId;
+		this.uploaderUsername = uploaderUsername;
+		this.title = title;
+		this.description = description;
+		this.view = view;
+	}
 	public Video(String filename, Long date, Long uploaderId, String title, String description, Long view) {
 		super();
 		this.filename = filename;
@@ -140,5 +153,11 @@ public class Video {
 //	public void setThumbnailImage(Resource thumbnailImageBase64) {
 //		this.thumbnailImage = thumbnailImageBase64;
 //	}
+	public String getUploaderUsername() {
+		return uploaderUsername;
+	}
+	public void setUploaderUsername(String uploaderUsername) {
+		this.uploaderUsername = uploaderUsername;
+	}
 	
 }

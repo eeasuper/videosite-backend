@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nano.videosite.models.Video;
 import com.nano.videosite.models.ViewVideo;
+import com.nano.videosite.services.JWTAuthenticationService;
 import com.nano.videosite.services.ViewService;
 //import com.nano.videosite.repositories.VideoRepository;
 import com.nano.videosite.storage.StorageFileNotFoundException;
@@ -35,7 +37,8 @@ import com.nano.videosite.storage.StorageService;
 public class FileUploadController {
 
     private final StorageService storageService;
-    
+    @Autowired
+	JWTAuthenticationService jwtService;
 
 //    @Autowired
 //    private VideoRepository videoRepository;
@@ -62,10 +65,14 @@ public class FileUploadController {
 
     @RequestMapping(method= RequestMethod.POST, value = "/upload/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Video> handleFileUpload(@RequestParam("file") MultipartFile file,
-            @PathVariable("id") Long userId) {
-        Video video = storageService.store(file, userId);
-        System.out.println(video.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(video);
+            @PathVariable("id") Long userId, @RequestHeader("Authorization") String authorization) {
+    	if(jwtService.isAuthenticated(authorization)) {
+	        Video video = storageService.store(file, userId);
+	        System.out.println(video.getId());
+	        return ResponseEntity.status(HttpStatus.CREATED).body(video);
+    	}else {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    	}
     }
     
 

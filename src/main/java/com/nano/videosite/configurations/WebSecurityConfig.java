@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers(HttpMethod.POST, "/register").permitAll()
 //                .antMatchers("/playlist/*/*").permitAll() //For Test
 //                .antMatchers("/addViewCount").permitAll() //For Test
-                .anyRequest().permitAll() // this line is for test.
+//                .anyRequest().permitAll() // this line is for test.
 //                .anyRequest().authenticated()
                 .and().headers().frameOptions().disable()
                 .and()

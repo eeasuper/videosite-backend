@@ -13,11 +13,11 @@ public class ViewVideo {
 	private @Id @GeneratedValue Long id;
 	public ViewVideo() {
 	}
-	public ViewVideo(String ip, long date, Long fileName) {
+	public ViewVideo(String ip, long date, Long videoId) {
 		super();
 		this.ip = ip;
 		this.date = date;
-		this.videoId = fileName;
+		this.videoId = videoId;
 	}
 	
 	public String getIp() {
@@ -35,8 +35,8 @@ public class ViewVideo {
 	public Long getVideoId() {
 		return videoId;
 	}
-	public void setVideoId(Long fileName) {
-		this.videoId = fileName;
+	public void setVideoId(Long videoId) {
+		this.videoId = videoId;
 	}
 	
 	

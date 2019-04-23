@@ -13,7 +13,8 @@ import com.nano.videosite.repositories.UserRepository;
 public class SignUpService {
 	@Autowired
 	UserRepository repository;
-	
+	@Autowired
+	JWTAuthenticationService jwtService;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -22,6 +23,8 @@ public class SignUpService {
 	}
     
 	public User signup(User user){
+		String JWT = jwtService.setAuthentication(user.getId(), user.getUsername(), user.getPassword());
+		user.setToken(JWT);
 		String encryptedPassword = this.passwordEncoder.encode(user.getPassword());
 		user.setPassword(encryptedPassword);
 		repository.save(user);

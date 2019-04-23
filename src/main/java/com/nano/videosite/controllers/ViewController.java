@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,10 +33,10 @@ public class ViewController {
 //    }
     
     //get view count of one specific video
-    @RequestMapping(method=RequestMethod.GET, value="/getViewCount", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity getViewCount(@RequestBody Video video){
-    	Long viewCount = viewService.getViewCount(video);
-    	return ResponseEntity.ok().build();
+    @RequestMapping(method=RequestMethod.GET, value="/getViewCount/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity getViewCount(@PathVariable("id") Long videoId){
+    	Long viewCount = viewService.getViewCount(videoId);
+    	return ResponseEntity.ok(viewCount);
     }
     
 }

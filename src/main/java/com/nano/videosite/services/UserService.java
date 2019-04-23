@@ -14,6 +14,8 @@ public class UserService {
 	
 	public User getUser(Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(()->new ElementNotFoundException());
+		user.setPassword(null);
+		user.setToken(null);;
 		return user;
 	}
 }
