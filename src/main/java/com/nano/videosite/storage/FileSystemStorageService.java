@@ -86,7 +86,6 @@ public class FileSystemStorageService implements StorageService{
             	throw new StorageException("Cannot store file of this file type: " + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-            	System.out.println("test1");
                 Files.copy(inputStream, location.resolve(realFilename),
                     StandardCopyOption.REPLACE_EXISTING);
             }
@@ -132,7 +131,6 @@ public class FileSystemStorageService implements StorageService{
         }
         
         try {
-        	System.out.println(filename);
 			videoThumbnail.thumbnail(userId, filename, location.resolve(filename));
 		} catch (Exception e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);
