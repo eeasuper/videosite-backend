@@ -109,7 +109,6 @@ public class FileSystemStorageService implements StorageService{
     //Copy the files in seeding-dir to a dir in upload-dir.
     @Override
     public Video storeSeedFiles(MultipartFile file, Long userId, String filename,Video video) {
-        Long date = new Date().getTime();
         Path location = createDirectory(userId);
         try {
             if (file.isEmpty()) {

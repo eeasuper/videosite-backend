@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nano.videosite.models.Video;
 import com.nano.videosite.models.ViewVideo;
 import com.nano.videosite.services.ViewService;
 
@@ -23,18 +22,12 @@ public class ViewController {
 	
     @RequestMapping(method=RequestMethod.POST, value="/addViewCount", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<HttpStatus> addViewCount(@RequestBody ViewVideo view){
-    	ViewVideo v = viewService.addViewCount(view);
+    	viewService.addViewCount(view);
     	return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
-//    @RequestMapping(method=RequestMethod.GET, value="/debounceView", produces = {MediaType.APPLICATION_JSON_VALUE})
-//    public ResponseEntity<ViewVideo> debounceView(@RequestBody ViewVideo view){
-//    	return null;
-//    }
-    
-    //get view count of one specific video
     @RequestMapping(method=RequestMethod.GET, value="/getViewCount/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity getViewCount(@PathVariable("id") Long videoId){
+    public ResponseEntity<Long> getViewCount(@PathVariable("id") Long videoId){
     	Long viewCount = viewService.getViewCount(videoId);
     	return ResponseEntity.ok(viewCount);
     }

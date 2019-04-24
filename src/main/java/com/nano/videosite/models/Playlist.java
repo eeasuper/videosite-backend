@@ -1,25 +1,15 @@
 package com.nano.videosite.models;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Playlist {
@@ -50,7 +40,6 @@ public class Playlist {
 	}
 	public Playlist(long userId, String title, long date) {
 		super();
-		this.id = id;
 		this.userId = userId;
 		this.title = title;
 		this.date = date;
@@ -63,7 +52,6 @@ public class Playlist {
 	}
 	public Playlist(long userId, Map<Integer, Video> playlist) {
 		super();
-		this.id = id;
 		this.userId = userId;
 		this.playlistList = playlist;
 	}

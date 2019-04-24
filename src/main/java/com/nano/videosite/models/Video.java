@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-import org.springframework.core.io.Resource;
 
 @Entity
 public class Video {
@@ -25,8 +24,7 @@ public class Video {
 	private String title;
 	private String description;
 	private Long view = (long) 0;
-	private String thumbnailImageBase64;
-//	private Resource thumbnailImage;
+	
 	public Video() {
 	}
 	public Video(Long id) {

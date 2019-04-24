@@ -1,9 +1,8 @@
 package com.nano.videosite.services;
 
 
-import java.time.LocalDate;
+
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ public class ViewService {
 	@Autowired 
 	VideoRepository videoRepository;
 	public ViewVideo addViewCount(ViewVideo view) {
-		//I shouldn't save the viewVideo. I should just read it and save view count on VideoRepository.
 		
 		ViewVideo v = viewRepository.findByIpAndVideoId(view.getIp(), view.getVideoId())
 				.orElse(view);
@@ -31,7 +29,6 @@ public class ViewService {
 			setViewCount(view);
 			return viewRepository.save(view);
 		}
-		//https://www.tutorialspoint.com/java/java_date_time.htm
 		Date requestDate = new Date(view.getDate());
 		Date lastSavedDate = new Date(v.getDate());
 		long difference = (requestDate.getTime() - lastSavedDate.getTime())/3600000;
@@ -54,9 +51,5 @@ public class ViewService {
 	public Long getViewCount(Long videoId) {
 		Video vid = videoRepository.findById(videoId).orElseThrow(()->new ElementNotFoundException());
 		return vid.getView();
-		
-		//NOTE: Later, change code to get view count through a SUM selection of sql.
-//		List<ViewVideo> list = viewRepository.findByFileName(video.getFilename());
-//		return list.size();
 	}
 }

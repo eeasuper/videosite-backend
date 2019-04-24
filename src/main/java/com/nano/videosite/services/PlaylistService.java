@@ -51,7 +51,7 @@ public class PlaylistService {
 			String username = userRepository.findById(val.getUserId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
 			val.setUsername(username);
 		});
-		Set set = new HashSet();
+		Set<Playlist> set = new HashSet<Playlist>();
 		playlist.forEach((val)->{
 			set.add(val);
 		});

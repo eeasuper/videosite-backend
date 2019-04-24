@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nano.videosite.models.Playlist;
@@ -30,11 +28,6 @@ public class PlaylistController {
 	PlaylistService playlistService;
 	@Autowired
 	JWTAuthenticationService jwtService;
-//	@RequestMapping(method=RequestMethod.GET, value="/user/{id}/playlist", produces={MediaType.APPLICATION_JSON_VALUE})
-//	public ResponseEntity<Set<Map<Integer,Video>>> allPlaylists(@PathVariable("id") Long userId){
-//		Set<Map<Integer,Video>> playlists = playlistService.allPlaylists(userId);
-//		return ResponseEntity.ok(playlists);
-//	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/user/{id}/playlist", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Set<Playlist>> allPlaylists(@PathVariable("id") Long userId){
@@ -72,8 +65,6 @@ public class PlaylistController {
 	public ResponseEntity<Map<Integer, Video>> editOrder(@RequestBody Map<Integer,Video> newPlaylist, @PathVariable("id") Long playlistId, @RequestHeader("Authorization") String authorization){
 		if(jwtService.isAuthenticated(authorization)) {
 			Map<Integer, Video> playlist = playlistService.editOrder(playlistId,newPlaylist);
-			//Or I could return 204, with no Response Body. For Testing, return a body.
-//			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			return ResponseEntity.ok(playlist);
 		}else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -85,8 +76,6 @@ public class PlaylistController {
 	public ResponseEntity<Playlist> editTitle(@RequestBody Playlist newPlaylist,@PathVariable("id") Long playlistId, @RequestHeader("Authorization") String authorization){
 		if(jwtService.isAuthenticated(authorization)) {
 			Playlist playlist = playlistService.editTitle(playlistId, newPlaylist);
-			//Or I could return 204, with no Response Body. For Testing, return a body.
-//			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			return ResponseEntity.ok(playlist);
 		}else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -102,13 +91,10 @@ public class PlaylistController {
 		}else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		//Or I could return 204, with no Response Body. For Testing, return a body.
-//		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE, value="/playlist/{id}")
-	public ResponseEntity deletePlaylist(@PathVariable("id") Long playlistId,@RequestHeader("Authorization") String authorization){
-//		System.out.println("deleted playlist");
+	public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long playlistId,@RequestHeader("Authorization") String authorization){
 		if(jwtService.isAuthenticated(authorization)) {
 			playlistService.deletePlaylist(playlistId);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -117,5 +103,3 @@ public class PlaylistController {
 		}
 	}
 }
-//Maybe I should use the below code for JWT authorization?
-//@RequestHeader(value="Authorization") String authorization,

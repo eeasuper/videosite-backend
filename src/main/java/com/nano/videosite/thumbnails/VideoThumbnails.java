@@ -5,11 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 
 import javax.imageio.ImageIO;
 
@@ -21,7 +19,6 @@ import com.nano.videosite.storage.StorageException;
 
 @Service
 public class VideoThumbnails {
-	//https://stackoverflow.com/questions/37163978/how-to-get-a-thumbnail-of-an-uploaded-video-file/42386323
 
     private final String rootLoc = "thumbnail-dir";
 

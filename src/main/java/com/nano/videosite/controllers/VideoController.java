@@ -3,10 +3,7 @@ package com.nano.videosite.controllers;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,15 +41,6 @@ public class VideoController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
-
-	//====Both getOneThumbnail methods work====
-//	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail", produces= MediaType.IMAGE_PNG_VALUE)
-//	public ResponseEntity<Resource> getOneThumbnail(@PathVariable("id") Long videoId) throws IOException{
-//		Resource image = videoService.getOneThumbnail(videoId);
-//	    return ResponseEntity.ok().body(image);
-//	    //.header(HttpHeaders.CONTENT_DISPOSITION,
-//        //"attachment; filename=\"" + image.getFilename() + "\"").contentType(MediaType.IMAGE_PNG)
-//	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail", produces= MediaType.IMAGE_PNG_VALUE)
 	public @ResponseBody ResponseEntity<byte[]> getOneThumbnail(@PathVariable("id") Long videoId) throws IOException{
