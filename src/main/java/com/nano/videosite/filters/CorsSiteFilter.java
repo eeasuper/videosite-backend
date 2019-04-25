@@ -15,11 +15,10 @@ import org.springframework.core.annotation.Order;
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CorsFilter implements Filter{
+public class CorsSiteFilter implements Filter{
 //	private final String frontEndDomain = "http://localhost:4200";
 	private final String frontEndDomain = "https://video-site-frontend.herokuapp.com";
-	public CorsFilter(){
-	}
+
 @Override
 public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 

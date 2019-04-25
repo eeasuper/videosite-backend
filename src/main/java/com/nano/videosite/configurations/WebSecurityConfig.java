@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
-import com.nano.videosite.filters.CorsFilter;
+import com.nano.videosite.filters.CorsSiteFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers(HttpMethod.POST, "/register").permitAll()
                 .and().headers().frameOptions().disable()
                 .and()
-                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
+                .addFilterBefore(new CorsSiteFilter(), ChannelProcessingFilter.class);
 
     }
 }
