@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.bytedeco.javacv.FrameGrabber.Exception;
+//import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -98,8 +98,6 @@ public class FileSystemStorageService implements StorageService{
 			videoThumbnail.thumbnail(userId, realFilename, location.resolve(realFilename));
 		} catch (Exception e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);
-		} catch (IOException e) {
-			throw new StorageException("Failed to create thumbnail: " + filename, e);
 		}
         return videoRepository.save(new Video(realFilename, date, userId));
         
@@ -124,6 +122,7 @@ public class FileSystemStorageService implements StorageService{
 
                 Files.copy(inputStream, location.resolve(filename),
                     StandardCopyOption.REPLACE_EXISTING);
+                
             }
         }
         catch (IOException e) {
@@ -131,10 +130,10 @@ public class FileSystemStorageService implements StorageService{
         }
         
         try {
+        	System.out.println(Files.exists(location.resolve(filename)));
+        	System.out.println(location.resolve(filename));
 			videoThumbnail.thumbnail(userId, filename, location.resolve(filename));
 		} catch (Exception e) {
-			throw new StorageException("Failed to create thumbnail: " + filename, e);
-		} catch (IOException e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);
 		}
         return videoRepository.save(new Video(filename, Long.parseLong(filename.substring(filename.lastIndexOf("-")+1,filename.lastIndexOf("."))), userId,video.getTitle(),video.getDescription(),video.getView()));
@@ -171,7 +170,6 @@ public class FileSystemStorageService implements StorageService{
             else { 
                 throw new StorageFileNotFoundException(
                         "Could not read file of videoId: " + videoId);
-
             }
         }
         catch (MalformedURLException e) {

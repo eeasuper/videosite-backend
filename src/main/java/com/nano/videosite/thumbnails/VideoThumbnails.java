@@ -1,54 +1,26 @@
 package com.nano.videosite.thumbnails;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.imageio.ImageIO;
-
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.springframework.stereotype.Service;
 
 import com.nano.videosite.storage.StorageException;
+
 
 @Service
 public class VideoThumbnails {
 
     private final String rootLoc = "thumbnail-dir";
 
-    public void getThumb(String videoFilename, String thumbFilename, int width, int height,int hour, int min, float sec)
-      throws IOException, InterruptedException
-    {
-        ProcessBuilder processBuilder = new ProcessBuilder("ffmpegApp", "-y", "-i", videoFilename, "-vframes", "1",
-    "-ss", hour + ":" + min + ":" + sec, "-f", "mjpeg", "-s", width + "*" + height, "-an", thumbFilename);
-        Process process = processBuilder.start();
-        InputStream stderr = process.getErrorStream();
-        InputStreamReader isr = new InputStreamReader(stderr);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        while ((line = br.readLine()) != null);
-        process.waitFor();
-    }
-
-//    public void main() throws Exception, IOException
-//    {
     public void thumbnail(Long userId, String realFilename, Path videoLocation) throws Exception, IOException {
-    	// get video here.
-        FFmpegFrameGrabber g = new FFmpegFrameGrabber(videoLocation.toString());
-        g.setFormat(getContentType(realFilename));
-        g.start();
-
+    	// save video thumbnail here using ffmpeg which should be configured as an AddOn in Heroku (or installed locally).
     	Path saveLocation = createDirectory(userId).resolve(realFilename.substring(0,realFilename.lastIndexOf(".")));
-    	ImageIO.write(g.grab().getBufferedImage(), "png", new File(saveLocation.toString() + ".png"));
-
-        g.stop();
+    	Runtime.getRuntime().exec("ffmpeg -i " + videoLocation.toString()+ " -ss 00:00:0.500 -vframes 1 "+saveLocation.toString()+".png");
     }
+    
     private Path createDirectory(Long userId) {
     	Path location = Paths.get(this.rootLoc + "/" +this.rootLoc + "-"+userId.toString());
     	try {
@@ -57,10 +29,6 @@ public class VideoThumbnails {
     		throw new StorageException("Could not create custom directory for userId: "+userId.toString(), e);
     	}
     	return location;
-    }
-    private String getContentType(String filename) {
-    	int dot = filename.lastIndexOf(".");
-        return filename.substring(dot+1);
     }
 }
 

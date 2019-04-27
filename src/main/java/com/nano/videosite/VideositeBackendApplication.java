@@ -61,13 +61,13 @@ public class VideositeBackendApplication {
     CommandLineRunner init(StorageService storageService) {
     	//==== Set up seeding ====
         return (args) -> {
-        	//====FOR TESTING====ERASE IN PRODUCTION
+        	//====FOR TESTING====
             storageService.deleteAll();
             storageService.init();
-            deleteAllUsers();
+            this.userRepository.deleteAll();
             this.playlistRepository.deleteAll();
             this.videoRepository.deleteAll();
-            //=======ABOVE IS FOR TESTING ERASE IN PRODUCTION.
+            //=======ABOVE IS FOR TESTING=====
             Long time = new Date().getTime();
             //===Create a user:
             User u1 = new User("name", "tom", this.passwordEncoder.encode("1234"), "email");
@@ -82,7 +82,7 @@ public class VideositeBackendApplication {
             Video v4 = new Video("flower-"+time+".webm",time,u2.getId(),"꽃이 피고 있어요", "아름다운 꽃이 피고 있네요.", (long) 0);
             Video v5 = new Video("yui-ura-on2-"+time+".mp4",time,u2.getId(),"yui-ura-on-2", "Just a japanese animation", (long) 0);
             Video v6 = new Video("yui-ura-on4-"+time+".mp4",time,u2.getId(),"yui-ura-on-4", "Just another japanese animation", (long) 0);
-            //===Convert the videos in /seeding-dir  to an upload File.
+            //===Convert the videos in /seeding-dir  to an upload-type File(MultipartFile).
             MultipartFile video = getVideoFile(v1.getFilename());
             MultipartFile video2 = getVideoFile(v2.getFilename());
             MultipartFile video3 = getVideoFile(v3.getFilename());
@@ -114,7 +114,6 @@ public class VideositeBackendApplication {
     
     //Important method to seed video files. Makes video file into an 'uploaded' file.
     private MultipartFile getVideoFile(String videoName) throws IOException {
-//    	Path path = Paths.get("upload-dir/upload-dir-1/"+videoName);
     	String realVideoName;
     	if(videoName.contains("webm")) {
     		realVideoName = videoName.substring(0,videoName.lastIndexOf("-"))+".webm";
@@ -131,10 +130,4 @@ public class VideositeBackendApplication {
     	return result;
     }
     
-    private void deleteAllUsers() {
-//        FileSystemUtils.deleteRecursively(rootLocation.toFile());
-//        Path thumbnailDir = Paths.get("thumbnail-dir");
-//        FileSystemUtils.deleteRecursively(thumbnailDir.toFile());
-    	userRepository.deleteAll();
-    }
 }
