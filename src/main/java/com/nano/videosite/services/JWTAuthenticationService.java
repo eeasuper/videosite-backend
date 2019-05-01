@@ -31,7 +31,6 @@ public class JWTAuthenticationService {
                     .getSubject();
         Authentication a = (username != null) ? new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()) : null;
         boolean exists = repository.existsByUsername(a.getName());
-	       System.out.println("does username exist:"+exists);
         if(exists) {
     	    SecurityContextHolder.getContext().setAuthentication(a);
     	    return true;

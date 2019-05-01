@@ -67,7 +67,6 @@ public class VideoService {
 //		Path file = Paths.get("thumbnail-dir/thumbnail-dir-"+video.getUploaderId().toString()).resolve(filename);
 		String file = "thumbnail-dir/thumbnail-dir-"+video.getUploaderId().toString()+"/"+filename;
 		byte[] fileContent = FileUtils.readFileToByteArray(new File(file));
-		System.out.println(file);
 		InputStream in = new ByteArrayInputStream(fileContent);
 		return IOUtils.toByteArray(in);
 	}
@@ -99,5 +98,14 @@ public class VideoService {
 		String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
 		vid.setUploaderUsername(username);
 		return vid;
+	}
+	
+	public List<Video> getSearch(String query){
+		List<Video> videoList = videoRepository.findByTitleContainingIgnoreCase(query);
+		videoList.forEach((vid)->{
+			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+			vid.setUploaderUsername(username);
+		});
+		return videoList;
 	}
 }

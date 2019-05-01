@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="SiteUser")
 public class User {
-	private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) long id;
+	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) long id;
 	private @Column(nullable=false) String  name;
 	private @Column(nullable=false) String username;
 	private @Column(nullable=false) String password;

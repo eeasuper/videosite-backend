@@ -54,6 +54,7 @@ public class FileUploadController {
     @RequestMapping(method= RequestMethod.POST, value = "/upload/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Video> handleFileUpload(@RequestParam("file") MultipartFile file,
             @PathVariable("id") Long userId, @RequestHeader("Authorization") String authorization) {
+    	System.out.println(userId);
     	if(jwtService.isAuthenticated(authorization)) {
 	        Video video = storageService.store(file, userId);
 	        System.out.println(video.getId());

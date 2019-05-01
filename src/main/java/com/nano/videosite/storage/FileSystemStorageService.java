@@ -99,6 +99,9 @@ public class FileSystemStorageService implements StorageService{
 		} catch (Exception e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);
 		}
+        System.out.println(realFilename);
+        System.out.println(userId);
+        System.out.println(date);
         return videoRepository.save(new Video(realFilename, date, userId));
         
     }
@@ -130,8 +133,6 @@ public class FileSystemStorageService implements StorageService{
         }
         
         try {
-        	System.out.println(Files.exists(location.resolve(filename)));
-        	System.out.println(location.resolve(filename));
 			videoThumbnail.thumbnail(userId, filename, location.resolve(filename));
 		} catch (Exception e) {
 			throw new StorageException("Failed to create thumbnail: " + filename, e);

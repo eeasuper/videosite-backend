@@ -89,20 +89,7 @@ public class PlaylistService {
 	}
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
-		playlist.getPlaylist().forEach((key, val)->{
-			System.out.println(key);
-			System.out.println(val.getFilename());
-		});
-		playlist.setPlaylist(newPlaylist);
-//		newPlaylist.forEach((val,v)->{
-//			System.out.println(val);
-//			System.out.println();
-//		});
-		playlist.getPlaylist().forEach((key, val)->{
-			System.out.println(key);
-			System.out.println(val.getFilename());
-		});
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());		
 		return playlistRepository.save(playlist).getPlaylist();
 	}
 	

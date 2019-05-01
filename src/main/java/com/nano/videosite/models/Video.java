@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
@@ -12,15 +13,13 @@ import javax.persistence.ManyToMany;
 @Entity
 public class Video {
 	public @Column(nullable=false) String filename;
-	private @GeneratedValue @Id @Column(name="video_id") Long id;
+	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) @Column(name="video_id") Long id;
 	private @Column(name="uploaded_date") Long date;
 	private Long uploaderId;
 	private String uploaderUsername;
 	
 	private @ManyToMany(mappedBy= "playlistList") Set<Playlist> playlists;
-	//ordered can probably be erased.
-	private int ordered;
-	
+
 	private String title;
 	private String description;
 	private Long view = (long) 0;
@@ -65,12 +64,6 @@ public class Video {
 		super();
 		this.filename = filename;
 		this.id = id;
-	}
-	public Video(String filename, Long id, int ordered) {
-		super();
-		this.filename = filename;
-		this.id = id;
-		this.ordered = ordered;
 	}
 	public Video(String filename, Long id, Long date, Long uploaderId) {
 		super();
@@ -133,24 +126,12 @@ public class Video {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public int getOrdered() {
-		return ordered;
-	}
-	public void setOrdered(int ordered) {
-		this.ordered = ordered;
-	}
 	public Long getUploaderId() {
 		return uploaderId;
 	}
 	public void setUploaderId(Long uploaderId) {
 		this.uploaderId = uploaderId;
 	}
-//	public Resource getThumbnailImage() {
-//		return thumbnailImage;
-//	}
-//	public void setThumbnailImage(Resource thumbnailImageBase64) {
-//		this.thumbnailImage = thumbnailImageBase64;
-//	}
 	public String getUploaderUsername() {
 		return uploaderUsername;
 	}

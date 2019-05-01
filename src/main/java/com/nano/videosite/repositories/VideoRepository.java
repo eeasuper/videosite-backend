@@ -16,4 +16,6 @@ public interface VideoRepository extends CrudRepository<Video, Long>{
 	List<Video> getRandomList();
 	
 	public Optional<List<Video>> findByUploaderIdOrderByDateDesc(Long uploaderId);
+	
+	List<Video> findByTitleContainingIgnoreCase(String title);
 }

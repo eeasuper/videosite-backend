@@ -65,4 +65,10 @@ public class VideoController {
 		Video video = videoService.getVideoDescription(videoId);
 	    return ResponseEntity.ok().body(video);
 	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/search/{query}", produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<List<Video>> getSearch(@PathVariable("query") String query) throws IOException{
+		List<Video> videoList = videoService.getSearch(query);
+	    return ResponseEntity.ok().body(videoList);
+	}
 }

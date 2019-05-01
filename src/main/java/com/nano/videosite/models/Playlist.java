@@ -14,7 +14,7 @@ import javax.persistence.ManyToMany;
 @Entity
 public class Playlist {
 	
-	private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(name="playlist_id") long id;
+	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) @Column(name="playlist_id") long id;
 	private long userId;
 	private String title;
 	private long date;
