@@ -89,7 +89,8 @@ public class PlaylistService {
 	}
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
-		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());		
+		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
+		playlist.setPlaylist(newPlaylist);
 		return playlistRepository.save(playlist).getPlaylist();
 	}
 	
@@ -114,3 +115,4 @@ public class PlaylistService {
 		playlistRepository.deleteById(playlistId);
 	}
 }
+

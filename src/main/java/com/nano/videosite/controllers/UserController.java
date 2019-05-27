@@ -40,7 +40,6 @@ public class UserController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE})
 	ResponseEntity<?> signIn(@RequestBody User newUser, HttpServletResponse res) throws URISyntaxException{
-		System.out.println("user:"+newUser.getUsername()+" "+ newUser.getPassword());
 		User user = signinService.signIn(newUser.getUsername(), newUser.getPassword(), res);
 		int status = res.getStatus();
 		
