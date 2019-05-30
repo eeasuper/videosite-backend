@@ -20,6 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         		.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login").permitAll() 
                 .antMatchers(HttpMethod.POST, "/register").permitAll()
+                .anyRequest().authenticated()
                 .and().headers().frameOptions().disable()
                 .and()
                 .addFilterBefore(new CorsSiteFilter(), ChannelProcessingFilter.class);
