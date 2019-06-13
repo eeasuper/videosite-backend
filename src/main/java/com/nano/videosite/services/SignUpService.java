@@ -1,6 +1,8 @@
 package com.nano.videosite.services;
 
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,9 @@ public class SignUpService {
 		this.repository = repository;
 	}
     
-	public User signup(User user){
-		String JWT = jwtService.setAuthentication(user.getId(), user.getUsername(), user.getPassword());
-		user.setToken(JWT);
+	public User signup(User user,HttpServletResponse res){
+		jwtService.setAuthentication(user.getId(), user.getUsername(), user.getPassword(),res);
+//		user.setToken(JWT);
 		String encryptedPassword = this.passwordEncoder.encode(user.getPassword());
 		user.setPassword(encryptedPassword);
 		repository.save(user);

@@ -36,10 +36,8 @@ public class SignInService {
 			return user;
 		}
 		
-		//does password inside spring token have to be encoded?
 		if(matches) {
-			String JWT = jwtService.setAuthentication(user.getId(), username, password);
-			user.setToken(JWT);
+			jwtService.setAuthentication(user.getId(), username, password,res);
 		}
 		user.setPassword(null);
 		return user;

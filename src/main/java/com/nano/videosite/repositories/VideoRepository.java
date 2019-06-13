@@ -10,7 +10,7 @@ import com.nano.videosite.models.Video;
 
 public interface VideoRepository extends CrudRepository<Video, Long>{
 	
-	List<Video> findFirst6ByUploaderIdOrderByDateAsc(Long uploaderId);
+	List<Video> findFirst6ByUploaderIdOrderByDateDesc(Long uploaderId);
 	
 	@Query(value="SELECT * FROM Video ORDER BY RANDOM() LIMIT 6", nativeQuery = true)
 	List<Video> getRandomList();

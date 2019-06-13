@@ -30,10 +30,11 @@ public class UserController {
 	UserService userService;
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
-	ResponseEntity<?> newUser(@RequestBody User newUser) throws URISyntaxException {
-		User user = signupService.signup(newUser);
+	ResponseEntity<?> newUser(@RequestBody User newUser, HttpServletResponse res) throws URISyntaxException {
+		User user = signupService.signup(newUser,res);
 		
 		return ResponseEntity
+				
 				.status(HttpStatus.CREATED)
 				.body(user);
 	}

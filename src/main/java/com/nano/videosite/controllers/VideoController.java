@@ -32,14 +32,10 @@ public class VideoController {
 		return ResponseEntity.ok(videos);
 	}
 	@RequestMapping(method=RequestMethod.PUT, value="/video", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Video> add(@RequestBody Video video, @RequestHeader("Authorization") String authorization){
+	public ResponseEntity<Video> add(@RequestBody Video video){
 		//Video is uploaded in FileUploadController. This is to save title and descriptions for the uploaded video.
-		if(jwtService.isAuthenticated(authorization)) {
-			Video vid = videoService.add(video);
-			return ResponseEntity.ok(vid);
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+		Video vid = videoService.add(video);
+		return ResponseEntity.ok(vid);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/video/{id}/thumbnail", produces= MediaType.IMAGE_PNG_VALUE)

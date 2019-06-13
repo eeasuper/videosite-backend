@@ -84,7 +84,7 @@ public class VideoService {
 	}
 	
 	public List<Video> getRecentVideoList(Long uploaderId){
-		List<Video> videoList = videoRepository.findFirst6ByUploaderIdOrderByDateAsc(uploaderId);
+		List<Video> videoList = videoRepository.findFirst6ByUploaderIdOrderByDateDesc(uploaderId);
 		videoList.forEach((vid)->{
 			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
 			vid.setUploaderUsername(username);

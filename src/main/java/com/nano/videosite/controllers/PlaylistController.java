@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +35,9 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/playlist", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Playlist> add(@RequestBody Playlist newPlaylist, @RequestHeader("Authorization") String authorization) {
-		if(jwtService.isAuthenticated(authorization)) {
-			Playlist playlist = playlistService.add(newPlaylist);
-			return ResponseEntity.status(HttpStatus.CREATED).body(playlist);
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+	public ResponseEntity<Playlist> add(@RequestBody Playlist newPlaylist) {
+		Playlist playlist = playlistService.add(newPlaylist);
+		return ResponseEntity.status(HttpStatus.CREATED).body(playlist);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/playlist/list/{id}", produces={MediaType.APPLICATION_JSON_VALUE})
@@ -62,44 +57,26 @@ public class PlaylistController {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/order-change", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Map<Integer, Video>> editOrder(@RequestBody Map<Integer,Video> newPlaylist, @PathVariable("id") Long playlistId, @RequestHeader("Authorization") String authorization){
-		if(jwtService.isAuthenticated(authorization)) {
-			Map<Integer, Video> playlist = playlistService.editOrder(playlistId,newPlaylist);
-			return ResponseEntity.ok(playlist);
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-		
+	public ResponseEntity<Map<Integer, Video>> editOrder(@RequestBody Map<Integer,Video> newPlaylist, @PathVariable("id") Long playlistId){
+		Map<Integer, Video> playlist = playlistService.editOrder(playlistId,newPlaylist);
+		return ResponseEntity.ok(playlist);		
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/title-change", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Playlist> editTitle(@RequestBody Playlist newPlaylist,@PathVariable("id") Long playlistId, @RequestHeader("Authorization") String authorization){
-		if(jwtService.isAuthenticated(authorization)) {
-			Playlist playlist = playlistService.editTitle(playlistId, newPlaylist);
-			return ResponseEntity.ok(playlist);
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-		
+	public ResponseEntity<Playlist> editTitle(@RequestBody Playlist newPlaylist,@PathVariable("id") Long playlistId){
+		Playlist playlist = playlistService.editTitle(playlistId, newPlaylist);
+		return ResponseEntity.ok(playlist);	
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/playlist/{id}/edit/add-video", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Playlist> editAddVideo(@RequestBody List<Video> newVideo,@PathVariable("id") Long playlistId, @RequestHeader("Authorization") String authorization){
-		if(jwtService.isAuthenticated(authorization)) {
-			Playlist playlist = playlistService.editAddVideo(playlistId, newVideo);
-			return ResponseEntity.ok(playlist);
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+	public ResponseEntity<Playlist> editAddVideo(@RequestBody List<Video> newVideo,@PathVariable("id") Long playlistId){
+		Playlist playlist = playlistService.editAddVideo(playlistId, newVideo);
+		return ResponseEntity.ok(playlist);
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE, value="/playlist/{id}")
-	public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long playlistId,@RequestHeader("Authorization") String authorization){
-		if(jwtService.isAuthenticated(authorization)) {
-			playlistService.deletePlaylist(playlistId);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+	public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long playlistId){
+		playlistService.deletePlaylist(playlistId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
