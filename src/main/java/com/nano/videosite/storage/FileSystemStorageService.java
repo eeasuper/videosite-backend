@@ -17,11 +17,13 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nano.videosite.configurations.MyUserPrincipal;
 import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.VideoRepository;
@@ -31,18 +33,12 @@ import com.nano.videosite.thumbnails.VideoThumbnails;
 public class FileSystemStorageService implements StorageService{
     private final Path rootLocation = Paths.get("upload-dir");
     private final String rootLoc = "upload-dir";
-    //https://stackoverflow.com/questions/42850555/video-and-audio-formats-supported-by-all-browsers
     private final List<String> videoFormats = new ArrayList<>(Arrays.asList(".mp4",".webm",".ogg"));
     
     @Autowired
     VideoRepository videoRepository;
     @Autowired
     VideoThumbnails videoThumbnail;
-    
-//    @Autowired
-//    public FileSystemStorageService(StorageProperties properties) {
-//        this.rootLocation = Paths.get(properties.getLocation());
-//    }
     
     private Path createDirectory(Long userId) {
     	Path location = Paths.get(this.rootLoc + "/" +this.rootLoc + "-"+userId.toString());
@@ -63,6 +59,9 @@ public class FileSystemStorageService implements StorageService{
     
     @Override
     public Video store(MultipartFile file, Long userId) {
+    	if(!verifyUserIdIsUsers(userId)) {
+    		return null;
+    	}
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         Long date = new Date().getTime();
         String realFilename = getRealFilename(filename, date);
@@ -201,6 +200,15 @@ public class FileSystemStorageService implements StorageService{
         catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not get thumbnail of videoId: " + video.getFilename(), e);
         }
+    }
+    
+    private boolean verifyUserIdIsUsers(Long userId) {
+    	MyUserPrincipal userPrincipal = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(userPrincipal.getId() != userId) {
+			return false;
+		}
+		return true;
     }
     
     @Override

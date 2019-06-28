@@ -35,6 +35,9 @@ public class VideoController {
 	public ResponseEntity<Video> add(@RequestBody Video video){
 		//Video is uploaded in FileUploadController. This is to save title and descriptions for the uploaded video.
 		Video vid = videoService.add(video);
+		if(vid == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.ok(vid);
 	}
 	

@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.configurations.MyUserPrincipal;
+import com.nano.videosite.models.User;
 import com.nano.videosite.repositories.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -52,8 +54,22 @@ public class JWTAuthenticationService {
         if (token != null) {
             String username = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
                     .getSubject();
-            return username != null ? new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()) : null;
+            Integer userId = (Integer) Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody().get("usr_id");
+            User user = new User((long) userId,username);
+            MyUserPrincipal principal = new MyUserPrincipal(user);
+            return username != null ? new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList()) : null;
         }
         return null;
-    }
+    } 
+	
+	public static String createToken(String username, Long userId) {
+		Claims userClaim = Jwts.claims();
+    	userClaim.put("usr_id", userId);
+    	userClaim.put("sub", username);
+        String JWT = Jwts.builder()
+        		.setClaims(userClaim)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
+		return JWT;
+	}
 }

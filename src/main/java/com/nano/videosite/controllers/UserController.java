@@ -1,5 +1,6 @@
 package com.nano.videosite.controllers;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +31,7 @@ public class UserController {
 	UserService userService;
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
-	ResponseEntity<?> newUser(@RequestBody User newUser, HttpServletResponse res) throws URISyntaxException {
+	ResponseEntity<?> newUser(@RequestBody User newUser, HttpServletResponse res) throws URISyntaxException, IOException {
 		User user = signupService.signup(newUser,res);
 		
 		return ResponseEntity

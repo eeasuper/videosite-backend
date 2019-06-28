@@ -13,8 +13,10 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.configurations.MyUserPrincipal;
 import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Playlist;
 import com.nano.videosite.models.Video;
@@ -34,23 +36,20 @@ public class PlaylistService {
 
 	
 	public Playlist add(Playlist newPlaylist) {
+		if(!verifyUserIdIsUsers(newPlaylist.getUserId())){
+			return null;
+		}
+		String username = userRepository.findById(newPlaylist.getUserId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+		newPlaylist.setUsername(username);
 		return playlistRepository.save(newPlaylist);
 	}
 	
-//	public Set<Map<Integer,Video>> allPlaylists(Long userId){
-//		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
-//		Set set = new HashSet();
-//		playlist.forEach((val)->{
-//			set.add(val.getPlaylist());
-//		});
-//		return set;
-//	}
 	public Set<Playlist> allPlaylists(Long userId){
 		List<Playlist> playlist = playlistRepository.findByUserId(userId).orElseThrow(()->new ElementNotFoundException());
-		playlist.forEach((val)->{
-			String username = userRepository.findById(val.getUserId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
-			val.setUsername(username);
-		});
+//		playlist.forEach((val)->{
+//			String username = userRepository.findById(val.getUserId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+//			val.setUsername(username);
+//		});
 		Set<Playlist> set = new HashSet<Playlist>();
 		playlist.forEach((val)->{
 			set.add(val);
@@ -60,10 +59,10 @@ public class PlaylistService {
 	
 	public Playlist onePlaylist(Long playlistId) {
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
-		playlist.getPlaylist().forEach((i,vid)->{
-			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
-			vid.setUploaderUsername(username);
-		});
+//		playlist.getPlaylist().forEach((i,vid)->{
+//			String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+//			vid.setUploaderUsername(username);
+//		});
 		return playlist;
 	}
 	
@@ -78,7 +77,7 @@ public class PlaylistService {
 		String filename = video.getFilename().substring(0,video.getFilename().lastIndexOf("."));
 		 // open image
 		File imgPath = new File("thumbnail-dir/thumbnail-dir-"+video.getUploaderId()+"/"+filename+".png");
-		System.out.println(imgPath.toString());
+		
 		BufferedImage bufferedImage = ImageIO.read(imgPath);
 
 		 // get DataBufferBytes from Raster
@@ -89,21 +88,32 @@ public class PlaylistService {
 	}
 	
 	public Map<Integer, Video> editOrder( Long playlistId, Map<Integer,Video> newPlaylist){
+		if(!verifyUserIdIsUsers(newPlaylist.get(1).getUploaderId())){
+			return null;
+		}
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		playlist.setPlaylist(newPlaylist);
 		return playlistRepository.save(playlist).getPlaylist();
 	}
 	
 	public Playlist editTitle(Long playlistId, Playlist newPlaylist){
+		if(!verifyUserIdIsUsers(newPlaylist.getUserId())){
+			return null;
+		}
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		playlist.setTitle(newPlaylist.getTitle());
 		return playlistRepository.save(playlist);
 	}
 	
 	public Playlist editAddVideo(Long playlistId, List<Video> newVideo) {
+		/*Add video to an already existing playlist.*/
+		if(!verifyUserIdIsUsers(newVideo.get(0).getUploaderId())){
+			return null;
+		}
 		Playlist playlist =playlistRepository.findById(playlistId).orElseThrow(()->new ElementNotFoundException());
 		Map<Integer, Video> playlistList = playlist.getPlaylist();
 		newVideo.forEach((val)->{
+			/*Add the new videos to the end of the playlist.*/
 			Video video = videoRepository.findById(val.getId()).orElseThrow(()->new ElementNotFoundException());
 			playlistList.put(playlistList.size()+1, video);
 		});
@@ -111,7 +121,20 @@ public class PlaylistService {
 		return playlistRepository.save(playlist);
 	}
 	
-	public void deletePlaylist(Long playlistId) {
+	public boolean deletePlaylist(Long playlistId,Long userId) {
+		if(!verifyUserIdIsUsers(userId)){
+			return false;
+		}
 		playlistRepository.deleteById(playlistId);
+		return true;
+	}
+	
+	private boolean verifyUserIdIsUsers(Long userId) {
+		MyUserPrincipal userPrincipal = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(userPrincipal.getId() != userId) {
+			return false;
+		}
+		return true;
 	}
 }

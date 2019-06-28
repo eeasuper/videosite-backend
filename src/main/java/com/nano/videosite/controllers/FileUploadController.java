@@ -55,6 +55,9 @@ public class FileUploadController {
     public ResponseEntity<Video> handleFileUpload(@RequestParam("file") MultipartFile file,
             @PathVariable("id") Long userId) {
         Video video = storageService.store(file, userId);
+        if(video == null) {
+        	return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         System.out.println(video.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(video);
     }

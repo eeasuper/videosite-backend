@@ -23,6 +23,12 @@ public class User {
 	public User(String username) {
 		this.username = username;
 	}
+	
+	public User(long id, String username) {
+		super();
+		this.id = id;
+		this.username = username;
+	}
 
 	public User(String username, String password) {
 		this.username = username;
@@ -39,6 +45,15 @@ public class User {
 	public User(String token, String name, String username, String password, String email) {
 		super();
 		this.token = token;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.email = email;
+	}
+	
+	public User(long id, String name, String username, String password, String email) {
+		super();
+		this.id = id;
 		this.name = name;
 		this.username = username;
 		this.password = password;

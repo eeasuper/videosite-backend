@@ -9,8 +9,10 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nano.videosite.configurations.MyUserPrincipal;
 import com.nano.videosite.exceptions.ElementNotFoundException;
 import com.nano.videosite.models.Video;
 import com.nano.videosite.repositories.UserRepository;
@@ -36,9 +38,14 @@ public class VideoService {
 	}
 	
 	public Video add(Video video) {
+		if(!verifyIdIsUsers(video.getUploaderId())) {
+			return null;
+		}
 		Video vid = videoRepository.findById(video.getId()).orElseThrow(()->new ElementNotFoundException());
 		vid.setDescription(video.getDescription());
 		vid.setTitle(video.getTitle());
+		String username = userRepository.findById(vid.getUploaderId()).orElseThrow(()->new ElementNotFoundException()).getUsername();
+		vid.setUploaderUsername(username);
 		return videoRepository.save(vid);
 	}
 	
@@ -107,5 +114,14 @@ public class VideoService {
 			vid.setUploaderUsername(username);
 		});
 		return videoList;
+	}
+	
+	private boolean verifyIdIsUsers(Long userId) {
+		MyUserPrincipal userPrincipal = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(userPrincipal.getId() != userId) {
+			return false;
+		}
+		return true;
 	}
 }

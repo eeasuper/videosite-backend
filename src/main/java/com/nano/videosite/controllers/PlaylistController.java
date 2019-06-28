@@ -25,8 +25,6 @@ public class PlaylistController {
 	
 	@Autowired
 	PlaylistService playlistService;
-	@Autowired
-	JWTAuthenticationService jwtService;
 	
 	@RequestMapping(method=RequestMethod.GET, value="/user/{id}/playlist", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Set<Playlist>> allPlaylists(@PathVariable("id") Long userId){
@@ -37,6 +35,10 @@ public class PlaylistController {
 	@RequestMapping(method=RequestMethod.POST, value="/playlist", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Playlist> add(@RequestBody Playlist newPlaylist) {
 		Playlist playlist = playlistService.add(newPlaylist);
+		System.out.println(playlist);
+		if(playlist == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(playlist);
 	}
 	
@@ -59,24 +61,36 @@ public class PlaylistController {
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/order-change", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Map<Integer, Video>> editOrder(@RequestBody Map<Integer,Video> newPlaylist, @PathVariable("id") Long playlistId){
 		Map<Integer, Video> playlist = playlistService.editOrder(playlistId,newPlaylist);
+		if(playlist == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.ok(playlist);		
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value="/playlist/{id}/edit/title-change", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Playlist> editTitle(@RequestBody Playlist newPlaylist,@PathVariable("id") Long playlistId){
 		Playlist playlist = playlistService.editTitle(playlistId, newPlaylist);
+		if(playlist == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.ok(playlist);	
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/playlist/{id}/edit/add-video", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Playlist> editAddVideo(@RequestBody List<Video> newVideo,@PathVariable("id") Long playlistId){
 		Playlist playlist = playlistService.editAddVideo(playlistId, newVideo);
-		return ResponseEntity.ok(playlist);
+		if(playlist == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(playlist);
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value="/playlist/{id}")
-	public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long playlistId){
-		playlistService.deletePlaylist(playlistId);
+	@RequestMapping(method = RequestMethod.DELETE, value="/playlist/{id}/{id2}")
+	public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long playlistId,@PathVariable("id2") Long userId){
+		boolean deleted = playlistService.deletePlaylist(playlistId,userId);
+		if(!deleted) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

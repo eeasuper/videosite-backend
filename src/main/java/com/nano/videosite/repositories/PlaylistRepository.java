@@ -11,3 +11,4 @@ public interface PlaylistRepository extends CrudRepository<Playlist, Long>{
 	public Playlist findByIdAndUserId(Long id, Long userId); 
 	public Optional<List<Playlist>> findByUserId(Long userId);
 }
+	
